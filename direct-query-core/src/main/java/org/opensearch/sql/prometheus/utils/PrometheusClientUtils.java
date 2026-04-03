@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import org.opensearch.sql.common.interceptors.AwsSigningInterceptor;
 import org.opensearch.sql.common.interceptors.BasicAuthenticationInterceptor;
+import org.opensearch.sql.common.interceptors.OAuth2TokenInterceptor;
 import org.opensearch.sql.common.interceptors.URIValidatorInterceptor;
 import org.opensearch.sql.common.setting.Settings;
 import org.opensearch.sql.datasource.client.exceptions.DataSourceClientException;
@@ -73,6 +74,8 @@ public class PrometheusClientUtils {
                         config.get(ACCESS_KEY), config.get(SECRET_KEY))),
                 config.get(REGION),
                 "aps"));
+      } else if (AuthenticationType.OAUTH2.equals(authenticationType)) {
+        okHttpClient.addInterceptor(new OAuth2TokenInterceptor(config));
       } else {
         throw new IllegalArgumentException(
             String.format(
@@ -104,6 +107,10 @@ public class PrometheusClientUtils {
           alertmanagerProperties.put(ACCESS_KEY, properties.get(ALERTMANAGER_ACCESS_KEY));
           alertmanagerProperties.put(SECRET_KEY, properties.get(ALERTMANAGER_SECRET_KEY));
           alertmanagerProperties.put(REGION, properties.get(ALERTMANAGER_REGION));
+        } else if (authType.equalsIgnoreCase("oauth2")) {
+          properties.entrySet().stream()
+              .filter(entry -> entry.getKey().startsWith("prometheus.oauth2."))
+              .forEach(entry -> alertmanagerProperties.put(entry.getKey(), entry.getValue()));
         }
       }
     }

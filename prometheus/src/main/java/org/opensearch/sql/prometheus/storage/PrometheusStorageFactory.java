@@ -75,10 +75,13 @@ public class PrometheusStorageFactory implements DataSourceFactory {
       } else if (AuthenticationType.AWSSIGV4AUTH.equals(authenticationType)) {
         DatasourceValidationUtils.validateLengthAndRequiredFields(
             dataSourceMetadataConfig, Set.of(URI, ACCESS_KEY, SECRET_KEY, REGION));
-      }
+      } else if (AuthenticationType.OAUTH2.equals(authenticationType)) {
+        DatasourceValidationUtils.validateLengthAndRequiredFields(
+            dataSourceMetadataConfig, Set.of(URI));
+      } 
     } else {
-      DatasourceValidationUtils.validateLengthAndRequiredFields(
-          dataSourceMetadataConfig, Set.of(URI));
+        DatasourceValidationUtils.validateLengthAndRequiredFields(
+            dataSourceMetadataConfig, Set.of(URI));
     }
     DatasourceValidationUtils.validateHost(
         dataSourceMetadataConfig.get(URI),

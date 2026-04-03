@@ -19,6 +19,9 @@ class AuthenticationTypeTest {
     assertEquals(
         AuthenticationType.AWSSIGV4AUTH,
         AuthenticationType.get(AuthenticationType.AWSSIGV4AUTH.getName()));
+    assertEquals(
+        AuthenticationType.OAUTH2,
+        AuthenticationType.get(AuthenticationType.OAUTH2.getName()));
   }
 
   @Test
